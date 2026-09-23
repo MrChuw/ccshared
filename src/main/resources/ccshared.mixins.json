@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.mrchuw.ccshared.mixin",
+  "compatibilityLevel": "${java}",
+  "mixins": [
+    "ComputerExecutorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
