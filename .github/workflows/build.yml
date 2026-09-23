@@ -3,7 +3,9 @@ name: Build
 on:
   push:
     branches: [main, master]
-    tags: ['v*']
+    tags:
+      - 'v*'
+      - '*/*'
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -13,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    name: Build all Stonecutter versions
+    name: Build Stonecutter Mod
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -37,19 +39,46 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build all versions
-        run: ./gradlew buildAndCollect --no-daemon --stacktrace
+      - name: Determine Build Target & Run Build
+        run: |
+          REF_NAME="${{ github.ref_name }}"
 
-      - name: Upload artifacts (per version)
+          # Se tiver '/', extrai o alvo que vem antes (ex: '26.3-neoforge' ou 'ccshared')
+          if [[ "$REF_NAME" == *"/"* ]]; then
+            TARGET="${REF_NAME%%/*}"
+          else
+            TARGET="all"
+          fi
+
+          echo "Target resolvido: $TARGET"
+
+          # Se o target for 'all', 'ccshared' ou se for disparo por branch/PR, builda tudo
+          if [ "$TARGET" = "all" ] || [ "$TARGET" = "ccshared" ] || [ "${{ github.ref_type }}" != "tag" ]; then
+            echo "Building all Stonecutter versions..."
+            ./gradlew buildAndCollect --no-daemon --stacktrace
+          else
+            echo "Building specific version: $TARGET..."
+            ./gradlew ":$TARGET:build" --no-daemon --stacktrace
+          fi
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: universal-vault-jars
-          path: build/libs/**/*.jar
+          name: mod-artifacts
+          path: |
+            build/libs/**/*.jar
+            versions/**/build/libs/*.jar
+            !**/*-sources.jar
+            !**/*-javadoc.jar
           if-no-files-found: error
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
-          files: build/libs/**/*.jar
+          files: |
+            build/libs/**/*.jar
+            versions/**/build/libs/*.jar
+            !**/*-sources.jar
+            !**/*-javadoc.jar
           generate_release_notes: true
