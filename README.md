@@ -1,5 +1,5 @@
 # cc: Shared
-A Fabric and NeoForge mod for CC: Tweaked that adds a **shared folder** every
+A Fabric and NeoForge mod for [CC: Tweaked](https://github.com/cc-tweaked/CC-Tweaked/) that adds a **shared folder** every
 computer can read from and write to. And the reason is that I am too lazy to use floppy disks or whatever.
 
 ## Features
