@@ -149,4 +149,5 @@ tasks.processResources {
 
 tasks.matching { it.name == "ideaSyncTask" }.configureEach {
     dependsOn("stonecutterGenerate")
+    dependsOn("generateGradleIdeaRuns")
 }

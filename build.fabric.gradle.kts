@@ -48,12 +48,12 @@ loom {
         options.put("mark-corresponding-synthetics", "1")
     }
 
-    runConfigs.named("server") {
-        preferGradleTask = true
-        generateRunConfig = true
-        runDirectory = file("run/server")
-        jvmArguments.add("-Dminecraft.eula=true")
-    }
+//    runConfigs.named("server") {
+//        preferGradleTask = true
+//        generateRunConfig = true
+//        runDirectory = file("run/server")
+//        jvmArguments.add("-Dminecraft.eula=true")
+//    }
 
     runConfigs.named("client") {
         preferGradleTask = true

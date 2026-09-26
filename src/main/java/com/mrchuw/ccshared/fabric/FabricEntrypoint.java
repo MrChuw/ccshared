@@ -2,6 +2,7 @@ package com.mrchuw.ccshared.fabric;
 
 //? if fabric {
 import com.mrchuw.ccshared.CCShared;
+import com.mrchuw.ccshared.data.RecipeIndex;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.world.level.storage.LevelResource;
@@ -23,10 +24,11 @@ public class FabricEntrypoint implements ModInitializer {
             Path sharedFolder = worldSaveDir.resolve("computercraft").resolve("shared");
             try {
                 Files.createDirectories(sharedFolder);
-                CCShared.LOGGER.info("[cc: Shared] Pasta compartilhada criada em: {}", sharedFolder);
+                CCShared.LOGGER.info("[cc: Shared] Shared folder created at: {}", sharedFolder);
             } catch (IOException e) {
-                CCShared.LOGGER.error("[cc: Shared] Falha ao criar pasta do CC:", e);
+                CCShared.LOGGER.error("[cc: Shared] Failed to create CC folder:", e);
             }
+            RecipeIndex.rebuild(server);
         });
 
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> FabricPlatformImpl.setServer(null));

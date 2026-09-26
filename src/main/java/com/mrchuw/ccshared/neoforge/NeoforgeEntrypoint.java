@@ -2,6 +2,7 @@ package com.mrchuw.ccshared.neoforge;
 
 //? if neoforge {
 /*import com.mrchuw.ccshared.CCShared;
+import com.mrchuw.ccshared.data.RecipeIndex;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -21,14 +22,17 @@ public class NeoforgeEntrypoint {
     }
 
     private void onServerAboutToStart(ServerAboutToStartEvent event) {
-        Path worldSaveDir = event.getServer().getWorldPath(LevelResource.ROOT);
+        var server = event.getServer();
+
+        Path worldSaveDir = server.getWorldPath(LevelResource.ROOT);
         Path sharedFolder = worldSaveDir.resolve("computercraft").resolve("shared");
         try {
             Files.createDirectories(sharedFolder);
-            CCShared.LOGGER.info("[cc: Shared] Pasta compartilhada criada em: {}", sharedFolder);
+            CCShared.LOGGER.info("[cc: Shared] Shared folder created at: {}", sharedFolder);
         } catch (IOException e) {
-            CCShared.LOGGER.error("[cc: Shared] Falha ao criar pasta do CC:", e);
+            CCShared.LOGGER.error("[cc: Shared] Failed to create CC folder:", e);
         }
+        RecipeIndex.rebuild(server);
     }
 }
 *///?}
